@@ -43,7 +43,7 @@ ibm_daphnia = new("indbasedModel",
                     newdaphnia = function(n) { 
                       if (n>0) { #se nasceu no dia
                         data.frame(age = rep(0, n), fase = 1, eggs = 0, gdd = 0, ovoposicao = 0) 
-
+                        
                       } else { #se nao nasceu no dia
                         NULL
                       }
@@ -83,7 +83,7 @@ ibm_daphnia = new("indbasedModel",
                         #por enquanto ele esta adicionando e colocando novamente ovos ate a morte do mosquito
                         
                         #verifica se o individuo esta na fase 4
-                         #gera um numero random de eggs de 40-200
+                        #gera um numero random de eggs de 40-200
                         inds #retorna os resultados
                       })},
                     survive  = function(inds, parms){ 
@@ -119,7 +119,7 @@ ibm_daphnia = new("indbasedModel",
                     agua = 11 ,#runif(1,0,15),
                     tb = c(2.9, 8.6, 10.8, 3.43)
                   ),                      
-                  init = data.frame(age=0, fase=4, eggs=150, gdd=0, ovoposicao = 0),
+                  init = data.frame(age=0, fase=4, eggs=5, gdd=0, ovoposicao = 0),
                   times = c(from=0, to=60, by=1),
                   solver = "myiteration"
 )
@@ -136,8 +136,7 @@ myiteration = function(y, times = NULL, func = NULL, parms = NULL,
     number   = nrow(res) 
     meanfase = mean(res$fase)
     meanage  = mean(res$age)
-    meaneggs = mean(res$eggs)
-    c(number=number, meanfase=meanfase, meanage=meanage, meaneggs=meaneggs)
+    c(number=number, meanfase=meanfase, meanage=meanage)
   }
   init              = y@init
   times             = fromtoby(y@times)
@@ -171,7 +170,11 @@ setMethod("plot", c("indbasedModel", "missing"), function(x, y, ...) {
   on.exit(par(opar))
   par(mfrow=c(2, 2))
   o = out(x)
-  plot(o$times, o$meaneggs, type="l", xlab="Time", ylab="Eggs per individual")
+  a<- c(0,o$number)
+  a<- a[-length(a)]
+  eggs= o$number-a
+  
+  plot(o$times, eggs, type="l", xlab="Time", ylab="Eggs per individual")
   plot(o$times, o$meanage,  type="l", xlab="Time", ylab="Mean age (d)")
   plot(o$times, o$number,   type="l", xlab="Time", ylab="Abundance")
   plot(o$times, o$number,   type="l", xlab="Time", ylab="Abundance", log="y")
@@ -185,3 +188,4 @@ setMethod("plot", c("indbasedModel", "missing"), function(x, y, ...) {
 # procurar entender o "sim"
 ibm_daphnia = sim(ibm_daphnia)
 plot(ibm_daphnia)
+
